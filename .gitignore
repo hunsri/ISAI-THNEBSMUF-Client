@@ -1,0 +1,41 @@
+# Ignoring the result files of the evaluation process
+res/evaluation/*
+
+# Compiled class files
+*.class
+
+# Log files
+*.log
+
+# Virtual machine crash logs
+hs_err_pid*
+
+# Eclipse
+.project
+.classpath
+.c9/
+.settings/
+bin/
+tmp/
+
+# IntelliJ IDEA
+*.iml
+.idea/
+out/
+
+# NetBeans
+nbproject/private/
+build/
+nbbuild/
+dist/
+nbdist/
+.nb-gradle/
+
+# VS Code
+.vscode/
+
+# Mac OS
+.DS_Store
+
+# Windows
+Thumbs.db

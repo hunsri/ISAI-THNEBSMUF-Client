@@ -1,0 +1,24 @@
+import lenz.htw.thnebsmuf.net.NetworkClient;
+import lenz.htw.thnebsmuf.net.Update;
+
+public class DemoClient {
+
+    public static void main(String[] args) {
+        NetworkClient client = new NetworkClient(null, "ICH", "YEAH!");
+
+        client.getMyPlayerNumber();
+        // client.getStartX(player, bot);
+        // client.getStartY(0, 0);
+
+        client.getAreaId(0, 0);  //Gebiete und Mauern (0) erkennen
+        while (client.isAlive()) {
+            Update u;
+            while ((u = client.pullNextUpdate()) != null) {
+                //Updates in eigenen Datenstruktur einarbeiten
+            }
+            // client.changeDirection(0, 10);
+            // client.changeDirection(1, 10);
+            // client.changeDirection(2, 10);
+        }
+    }
+}
