@@ -19,7 +19,10 @@ public class AClient {
             Update u;
             while ((u = client.pullNextUpdate()) != null) {
                 //Updates in eigenen Datenstruktur einarbeiten
+                field.updateField(u);
             }
+            fieldViewer.updateImage();
+
         }
     }
 }

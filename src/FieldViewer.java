@@ -6,18 +6,28 @@ public class FieldViewer extends JPanel {
     private BufferedImage image;
     private Field field;
 
+    private final int scale = 5; 
+
     public FieldViewer(Field field) {
         this.field = field;
-        int scale = 5;
-
         image = new BufferedImage(Field.SIZE*scale, Field.SIZE*scale, BufferedImage.TYPE_INT_RGB);
         setPreferredSize(new Dimension(Field.SIZE*scale, Field.SIZE*scale));
 
+        render();
+    }
+
+    private void render() {
         Color color = new Color (0, 0, 0);
+
         for (int y = 0; y < Field.SIZE; y++) {
             for (int x = 0; x < Field.SIZE; x++) {
-                int value = field.getCachedAreaId(x, y);
-                color = new Color(value, value, value).brighter();
+                // int value = field.getCachedAreaId(x, y);
+                int value = field.getFieldAreaId(x, y);
+                if(value > 255) { //checking for special values
+                    color = Trails.getTrail(value).getColor();
+                } else {
+                    color = new Color(value, value, value).brighter();
+                }
 
                 image.setRGB(x*scale, y*scale, color.getRGB());
 
@@ -29,6 +39,11 @@ public class FieldViewer extends JPanel {
                 }
             }
         }
+    }
+
+    public void updateImage() {
+        render();
+        repaint();
     }
 
     @Override
