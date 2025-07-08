@@ -42,6 +42,10 @@ public class Field {
         areaID[update.x][update.y] = value;
     }
 
+    public void markDebug(int x, int y) {
+        areaID[x][y] = Trails.DEBUG.getValue();
+    }
+
     public int getFieldAreaId(int x, int y) {
         return areaID[x][y];
     }

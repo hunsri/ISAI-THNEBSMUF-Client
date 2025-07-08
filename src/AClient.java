@@ -2,10 +2,21 @@ import lenz.htw.thnebsmuf.net.NetworkClient;
 import lenz.htw.thnebsmuf.net.Update;
 
 public class AClient {
+    public static int myNumber; 
+
     public static void main(String[] args) {
         NetworkClient client = new NetworkClient(null, "AClient", "Victory Text");
+        myNumber = client.getMyPlayerNumber();
 
         Field field = new Field(client);
+
+        Position posA = new Position(client.getStartX(myNumber, 0), client.getStartY(myNumber, 0));
+        Position posB = new Position(client.getStartX(myNumber, 1), client.getStartY(myNumber, 1));
+        Position posC = new Position(client.getStartX(myNumber, 2), client.getStartY(myNumber, 2));
+
+        Pathfinder finderA = new Pathfinder(field, posA, new Position(0, 0));
+        Pathfinder finderB = new Pathfinder(field, posB, new Position(0, 0));
+        Pathfinder finderC = new Pathfinder(field, posC, new Position(0, 0));
 
         FieldViewer fieldViewer = new FieldViewer(field);
 
