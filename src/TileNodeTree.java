@@ -42,6 +42,7 @@ public class TileNodeTree {
         while(currentNode.getParentNode() != null) {
             pathToTarget.add(currentNode);
             finder.markDebug(currentNode.getPosition().x, currentNode.getPosition().y);
+            finder.addToPlannedRoute(currentNode);
             currentNode = currentNode.getParentNode();
         }
     }
