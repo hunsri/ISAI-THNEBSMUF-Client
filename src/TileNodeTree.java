@@ -49,6 +49,11 @@ public class TileNodeTree {
 
     private void addChildrenToNode(TileNode node) {
         for(Direction d: Direction.values()) {
+            // Prevent moving in the direction opposite to the current node's facing direction
+            if(d == Direction.getOpposite(node.getFacing())) {
+                continue;
+            }
+
             Position p = node.getPosition().getNeighbor(d);
             if(canCreateAt(p)) {
                 TileNode n = new TileNode(node, p, d);

@@ -1,4 +1,5 @@
 import java.util.ArrayList;
+import java.util.LinkedList;
 
 public class Pathfinder {
 
@@ -6,8 +7,10 @@ public class Pathfinder {
 
     private TileNodeTree tree;
 
+    private Direction botFacingDirection;
+
     // contains the route that the pathfinder found
-    private ArrayList<TileNode> plannedRoute = new ArrayList<TileNode>();
+    private LinkedList<TileNode> plannedRoute = new LinkedList<TileNode>();
 
     // and as map representation, used to signal other pathfinders where they can't go
     // true represents that the tile is in use
@@ -15,13 +18,14 @@ public class Pathfinder {
 
     public static ArrayList<Pathfinder> teamedFinders = new ArrayList<Pathfinder>();
 
-    public Pathfinder(Field field, Position start, Position end) {
+    public Pathfinder(BotType botType, Field field, Position start, Position end) {
         this.field = field;
         tree = new TileNodeTree(this, start, end);
         tree.buildTree();
 
+        botFacingDirection = Direction.EAST; //all bots start facing east
+
         teamedFinders.add(this);
-        System.out.println(teamedFinders.size());
     }
 
     public boolean canStepAt(int posX, int posY) {
@@ -35,7 +39,6 @@ public class Pathfinder {
         // Another pathfinder using a tile prohibits us from going there
         for(int i = 0; i < teamedFinders.size(); i++) {
             if(teamedFinders.get(i).plannedRouteOnMap[posX][posY] == true) {
-                System.out.println(new Position(posX, posY));
                 return false;
             }
         }
@@ -46,6 +49,18 @@ public class Pathfinder {
     public void addToPlannedRoute(TileNode tileNode) {
         plannedRoute.add(tileNode);
         plannedRouteOnMap[tileNode.getPosition().x][tileNode.getPosition().y] = true;
+    }
+
+    // public int nextMovement() {
+    //TODO
+    // }
+
+    private Direction nextDirection() {
+        if(plannedRoute.size()>0) {
+            return plannedRoute.pop().getFacing();
+        } else {
+            return Direction.EAST;
+        }
     }
 
     public void markDebug(int x, int y) {
