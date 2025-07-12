@@ -51,6 +51,53 @@ public class Pathfinder {
         plannedRouteOnMap[tileNode.getPosition().x][tileNode.getPosition().y] = true;
     }
 
+    public Move getNextMove() {
+        Move ret = new Move(bot.getBotType(), 0);
+
+        TileNode nextTile = nextDirection();
+
+        Direction vec = Direction.vectorDirection(bot.getPosition(), nextTile.getPosition());
+
+        // move back
+        if(Direction.getOpposite(bot.getFacingDirection()) == vec) {
+            System.err.println("Attempted to move backwards!");
+            return null;
+        }
+
+        // moving straight 
+        if(vec == bot.getFacingDirection()) {
+            if(bot.getFacingDirection() == Direction.NORTH || bot.getFacingDirection() == Direction.WEST) {
+                ret.moveAt = 0;
+            } else {
+                ret.moveAt = Field.SIZE-1;
+            }
+
+            MoveChecker.doesMoveReachDestination(bot, ret.moveAt, nextTile.getPosition());
+            return ret;
+        }
+
+        // moving to the sides
+
+        // if we are facing a positive direction apply 1, otherwise -1
+        int step = (bot.getFacingDirection() == Direction.SOUTH || bot.getFacingDirection() == Direction.EAST ? 1: -1);
+
+        int myPointOnAxis;
+
+        if(Axis.getAxisOf(bot.getFacingDirection())== Axis.X) {
+            myPointOnAxis = bot.getPosition().x;
+        } else {
+            myPointOnAxis = bot.getPosition().y;
+        }
+
+        // if the moving vector is positive apply 1, otherwise -1
+        int mult = (vec == Direction.SOUTH || vec == Direction.EAST ? 1: -1);
+
+        ret.moveAt = (myPointOnAxis + step) * mult;
+        MoveChecker.doesMoveReachDestination(bot, ret.moveAt, nextTile.getPosition());
+        return ret;
+    }
+
+
     public Move nextMove() {
 
         Move ret;

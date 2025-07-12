@@ -15,8 +15,8 @@ public class AClient {
         Bot botC = new Bot(client, BotType.CLIPPING);
 
         Pathfinder finderA = new Pathfinder(botA, field, new Position(1, 1));
-        // Pathfinder finderB = new Pathfinder(botB, field, new Position(1, 1));
-        // Pathfinder finderC = new Pathfinder(botC, field, new Position(1, 1));
+        Pathfinder finderB = new Pathfinder(botB, field, new Position(1, 1));
+        Pathfinder finderC = new Pathfinder(botC, field, new Position(1, 1));
 
 
         FieldViewer fieldViewer = new FieldViewer(field);
@@ -37,22 +37,22 @@ public class AClient {
                         botA.update(u);
                         System.out.println("===BOT NOW AT===");
                         System.out.println(botA.getPosition() +" Facing: "+botA.getFacingDirection());
-                        finderA.refresh(new Position(1, 1));
-                        Move m = finderA.nextMove();
+                        finderA.refresh(new Position(255, 0));
+                        Move m = finderA.getNextMove();
                         if(m != null) {
                             client.changeDirection(m.botID, m.moveAt);
                         }
                     // }else if (u.bot == botB.getBotType().ordinal()) {
                     //     botB.update(u);
                     //     finderB.refresh(new Position(1, 1));
-                    //     Move m = finderB.nextMove();
+                    //     Move m = finderB.getNextMove();
                     //     if(m != null) {
                     //         client.changeDirection(m.botID, m.moveAt);
                     //     }
                     // }else if (u.bot == botC.getBotType().ordinal()) {
                     //     botC.update(u);
                     //     finderC.refresh(new Position(1, 1));
-                    //     Move m = finderC.nextMove();
+                    //     Move m = finderC.getNextMove();
                     //     if(m != null) {
                     //         client.changeDirection(m.botID, m.moveAt);
                     //     }
