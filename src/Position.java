@@ -41,4 +41,18 @@ public class Position {
     public String toString() {
         return "Position{" + "x=" + x + ", y=" + y + '}';
     }
+
+    @Override
+    public boolean equals(Object obj) {
+        if(!(obj instanceof Position)) {
+            return false;
+        }
+        Position compare = (Position) obj;
+
+        if(compare.x == x && compare.y == y) {
+            return true;
+        }
+
+        return false;
+    }
 }

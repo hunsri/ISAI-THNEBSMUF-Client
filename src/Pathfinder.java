@@ -7,7 +7,7 @@ public class Pathfinder {
 
     private TileNodeTree tree;
 
-    private Direction botFacingDirection;
+    private Bot bot;
 
     // contains the route that the pathfinder found
     private LinkedList<TileNode> plannedRoute = new LinkedList<TileNode>();
@@ -18,12 +18,12 @@ public class Pathfinder {
 
     public static ArrayList<Pathfinder> teamedFinders = new ArrayList<Pathfinder>();
 
-    public Pathfinder(BotType botType, Field field, Position start, Position end) {
-        this.field = field;
-        tree = new TileNodeTree(this, start, end);
-        tree.buildTree();
+    public Pathfinder(Bot bot, Field field, Position end) {
+        this.bot = bot;
 
-        botFacingDirection = Direction.EAST; //all bots start facing east
+        this.field = field;
+        tree = new TileNodeTree(this, bot.getPosition(), end);
+        tree.buildTree();
 
         teamedFinders.add(this);
     }
@@ -51,15 +51,50 @@ public class Pathfinder {
         plannedRouteOnMap[tileNode.getPosition().x][tileNode.getPosition().y] = true;
     }
 
-    // public int nextMovement() {
-    //TODO
-    // }
+    public Move nextMove() {
 
-    private Direction nextDirection() {
-        if(plannedRoute.size()>0) {
-            return plannedRoute.pop().getFacing();
+        Move ret;
+
+        TileNode nextTurnTile = nextDirection();
+        
+        if(nextTurnTile == null){
+            return null;
+        }
+        
+        Movement m = Movement.directionToMovement(bot.getFacingDirection(), nextTurnTile.getFacing());
+
+        if(m == Movement.STRAIGHT){
+            if(bot.getFacingDirection() == Direction.NORTH || bot.getFacingDirection() == Direction.WEST)
+                ret = new Move(bot.getBotType(), 0);
+            else
+                ret = new Move(bot.getBotType(), Field.SIZE-1);
+        }
+
+        int moveAt;
+        Axis axis = Axis.getAxisOf(bot.getFacingDirection());
+        if(axis == Axis.X) {
+            moveAt = nextTurnTile.getPosition().x;
         } else {
-            return Direction.EAST;
+            moveAt = nextTurnTile.getPosition().y;
+        }
+
+        Direction d = Direction.vectorDirection(bot.getPosition(), nextTurnTile.getPosition());
+
+        if(d == Direction.NORTH || d == Direction.WEST) {
+            moveAt *= -1;
+        }
+
+        ret = new Move(bot.getBotType(), moveAt);
+        MoveChecker.doesMoveReachDestination(bot, moveAt, nextTurnTile.getPosition());
+
+        return ret;
+    }
+
+    private TileNode nextDirection() {
+        if(plannedRoute.size()>0) {
+            return plannedRoute.removeLast();
+        } else {
+            return null;
         }
     }
 
@@ -67,12 +102,43 @@ public class Pathfinder {
         field.markDebug(x, y);
     }
 
-    public void refresh(Position start, Position end) {
+    public void refresh(Position end) {
         plannedRoute.clear();
         plannedRouteOnMap = new boolean[Field.SIZE][Field.SIZE];
 
-        tree = new TileNodeTree(this, start, end);
+        tree = new TileNodeTree(this, bot.getPosition(), end);
         tree.buildTree();
     }
+
+    // Check whether the bot has reached the location of its turn
+    //TODO replace with turn check
+    // private boolean hasBotReachedTurningPoint() {
+
+    //     Position p = field.getBotPosition(botType);
+
+    //     if(Axis.getAxisOf(botFacingDirection) == Axis.X) {
+    //         if(botFacingDirection == Direction.WEST) {
+    //             if(p.x >= nextTurningPoint-1) {
+    //                 return true;
+    //             }
+    //         } else { //EAST
+    //             if(p.x <= nextTurningPoint+1) {
+    //                 return true;
+    //             }
+    //         }
+    //     } else { //Y
+    //         if(botFacingDirection == Direction.SOUTH) {
+    //             if(p.y >= nextTurningPoint-1) {
+    //                 return true;
+    //             }
+    //         } else { //NORTH
+    //             if(p.y <= nextTurningPoint+1) {
+    //                 return true;
+    //             }        
+    //         }
+    //     }
+
+    //     return false;
+    // }
 
 }

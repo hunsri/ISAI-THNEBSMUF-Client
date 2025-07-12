@@ -10,6 +10,10 @@ public class Field {
 
     NetworkClient client;
 
+    private Position defaultBot;
+    private Position clippingBot;
+    private Position borderlessBot;
+
     public Field (NetworkClient client) {
         this.client = client;
         initField();
@@ -22,6 +26,15 @@ public class Field {
                 areaID[i][j] = client.getAreaId(i, j);
             }
         }
+
+        for(int i = 0; i < BOTS; i++) {
+            int x = client.getStartX(client.getMyPlayerNumber(), i);
+            int y = client.getStartY(client.getMyPlayerNumber(), i);
+
+            areaID[x][y] = Trails.START_POSITION.getValue();
+        }
+
+        updateBotPositions();
     }
 
     public void updateField(Update update) {
@@ -40,13 +53,34 @@ public class Field {
         }
 
         areaID[update.x][update.y] = value;
+        updateBotPositions();
     }
 
     public void markDebug(int x, int y) {
         areaID[x][y] = Trails.DEBUG.getValue();
     }
 
+    private void updateBotPositions() {
+        int myPlayerID = client.getMyPlayerNumber();
+        defaultBot = new Position(client.getStartX(myPlayerID, BotType.DEFAULT.ordinal()), client.getStartY(myPlayerID, BotType.DEFAULT.ordinal()));
+        clippingBot = new Position(client.getStartX(myPlayerID, BotType.CLIPPING.ordinal()), client.getStartY(myPlayerID, BotType.CLIPPING.ordinal()));
+        borderlessBot = new Position(client.getStartX(myPlayerID, BotType.BORDERLESS.ordinal()), client.getStartY(myPlayerID, BotType.BORDERLESS.ordinal()));
+    }
+
     public int getFieldAreaId(int x, int y) {
         return areaID[x][y];
+    }
+
+    public Position getBotPosition(BotType botType) {
+        switch (botType) {
+            case DEFAULT:
+                return defaultBot;
+            case BORDERLESS:
+                return borderlessBot;
+            case CLIPPING:
+                return clippingBot;
+            default:
+                return defaultBot; //just to satisfy switch statement
+        }
     }
 }
