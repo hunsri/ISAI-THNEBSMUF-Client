@@ -25,12 +25,22 @@ public class Bot {
         facingDirection = Direction.EAST;  // bots always start facing east
     }
 
-    public void update(Update u) {
+
+    /**
+     * Updates the bot position.
+     * Returns false when it lost the bot orientation.
+     * When this happens it is recommended to rebuild pathfinding.
+     * Will attempt to rebuild orientation on the next update.
+     * 
+     * @param u
+     * @return Whether the bot is still tracked or not 
+     */
+    public boolean update(Update u) {
         if(u.player != myID)
-            return;
+            return true;
 
         if(u.bot != botType.ordinal())
-            return;
+            return true;
 
         if(botPosition.x != u.x || botPosition.y != u.y) {
             previousPosition.x = botPosition.x;
@@ -41,8 +51,14 @@ public class Bot {
         }
 
         if(!previousPosition.equals(botPosition)){
-            facingDirection = Direction.vectorDirection(previousPosition, botPosition);
+            try {
+                facingDirection = Direction.vectorDirection(previousPosition, botPosition);
+            } catch (Exception e) {
+                return false;
+            }
         }
+
+        return true;
     }
 
     private Position fetchStartPosition() {
@@ -51,6 +67,10 @@ public class Bot {
 
     public Position getPosition() {
         return botPosition;
+    }
+
+    public Position getPositionAhead() {
+        return MoveChecker.getPositionAhead(this);
     }
 
     public BotType getBotType() {

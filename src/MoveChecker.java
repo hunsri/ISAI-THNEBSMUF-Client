@@ -98,7 +98,7 @@ public class MoveChecker {
         }
     }
 
-    private static boolean isPositionValid(Position position, Field field, boolean ignoreBorder) {
+    public static boolean isPositionValid(Position position, Field field, boolean ignoreBorder) {
         
         boolean outOfBounds = false;
 
@@ -126,7 +126,7 @@ public class MoveChecker {
         return false;
     }
 
-    private static Position getPositionAhead(Bot bot) {
+    public static Position getPositionAhead(Bot bot) {
         Direction d = bot.getFacingDirection();
 
         Position p = bot.getPosition();
@@ -140,6 +140,25 @@ public class MoveChecker {
                 return new Position(p.x, p.y+1);
             case EAST:
                 return new Position(p.x+1, p.y);
+            default:
+                return null;
+        }
+    }
+
+    public static Position getPositionStepsAhead(Bot bot, int amount) {
+        Direction d = bot.getFacingDirection();
+
+        Position p = bot.getPosition();
+
+        switch (d) {
+            case NORTH:
+                return new Position(p.x, p.y-amount);
+            case WEST:
+                return new Position(p.x-amount, p.y);
+            case SOUTH:
+                return new Position(p.x, p.y+amount);
+            case EAST:
+                return new Position(p.x+amount, p.y);
             default:
                 return null;
         }
@@ -185,6 +204,23 @@ public class MoveChecker {
 
     public static boolean isAheadInvalid(Bot b, Field f) {
         Position ahead = getPositionAhead(b);
+
+        boolean ignoreBorder = (BotType.BORDERLESS == b.getBotType());
+        boolean ignoreOwnTrail = (BotType.CLIPPING == b.getBotType());
+
+        return !isPositionValid(ahead, f, ignoreBorder);
+    }
+
+    /**
+     * Equivalent to {@link #isAheadInvalid(Bot, Field)}, when stepsAhead set to 1
+     * 
+     * @param b the bot
+     * @param f the field
+     * @param stepsAhead steps to look in advance of the bot
+     * @return true if the position steps ahead is invalid, false otherwise
+     */
+    public static boolean isStepsAheadInvalid(Bot b, Field f, int stepsAhead) {
+        Position ahead = getPositionStepsAhead(b, stepsAhead);
 
         boolean ignoreBorder = (BotType.BORDERLESS == b.getBotType());
         boolean ignoreOwnTrail = (BotType.CLIPPING == b.getBotType());

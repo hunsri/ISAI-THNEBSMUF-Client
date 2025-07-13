@@ -63,7 +63,13 @@ public class Field {
     }
 
     public void cleanDebug() {
-        debug = new boolean[Field.SIZE][Field.SIZE];
+        // debug = new boolean[Field.SIZE][Field.SIZE];
+
+        for(int i = 0; i < Field.SIZE; i++) {
+            for(int j = 0; j < Field.SIZE; j++) {
+                debug[i][j] = false;
+            }
+        }
     }
 
     private void updateBotPositions() {

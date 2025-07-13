@@ -16,7 +16,7 @@ public enum Direction {
         }
     }
 
-    public static Direction vectorDirection(Position a, Position b) {
+    public static Direction vectorDirection(Position a, Position b) throws IllegalArgumentException {
         
         if (a.x == b.x) {
             if (a.y == b.y + 1) return NORTH;

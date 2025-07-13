@@ -11,6 +11,8 @@ public class Pathfinder {
 
     private Bot bot;
 
+    private DestinationFinder destinationFinder;
+
     // contains the route that the pathfinder found
     private LinkedList<TileNode> plannedRoute = new LinkedList<TileNode>();
 
@@ -20,11 +22,12 @@ public class Pathfinder {
 
     public static ArrayList<Pathfinder> teamedFinders = new ArrayList<Pathfinder>();
 
-    public Pathfinder(Bot bot, Field field, Position end) {
+    public Pathfinder(Bot bot, Field field) {
         this.bot = bot;
-
         this.field = field;
-        tree = new TileNodeTree(this, bot.getPosition(), end);
+
+        destinationFinder = new DestinationFinder(bot, field);
+        tree = new TileNodeTree(this, bot.getPosition(), destinationFinder.getDestination());
         tree.buildTree();
 
         teamedFinders.add(this);
@@ -54,13 +57,22 @@ public class Pathfinder {
     }
 
     public Move getNextMove() {
-        consumptionCounter += 1; 
-
         Move ret = new Move(bot.getBotType(), 0);
 
         TileNode nextTile = nextDirection();
+        
+        if(nextTile == null) {
+            return null;
+        }
+        consumptionCounter += 1; 
 
-        Direction vec = Direction.vectorDirection(bot.getPosition(), nextTile.getPosition());
+        Direction vec;
+        try {
+            vec = Direction.vectorDirection(bot.getPosition(), nextTile.getPosition());
+        } catch (Exception e) {
+            System.err.println(e.getMessage());
+            return null;
+        }
 
         // move back
         if(Direction.getOpposite(bot.getFacingDirection()) == vec) {
@@ -113,12 +125,36 @@ public class Pathfinder {
         field.markDebug(x, y);
     }
 
+    /**
+     * Attempting to find a new path to the target
+     * Forcing a target position with the given position
+     * 
+     * @param end
+     */
     public void refresh(Position end) {
         consumptionCounter = 0;
         plannedRoute.clear();
         plannedRouteOnMap = new boolean[Field.SIZE][Field.SIZE];
 
         tree = new TileNodeTree(this, bot.getPosition(), end);
+        tree.buildTree();
+    }
+
+    /**
+     * Attempting to find a new path to the target.
+     * Target gets determined automatically.
+     * 
+     * @param end
+     */
+    public void refresh(boolean planAhead) {
+        consumptionCounter = 0;
+        plannedRoute.clear();
+        plannedRouteOnMap = new boolean[Field.SIZE][Field.SIZE];
+
+        Position pos = planAhead ? bot.getPositionAhead() : bot.getPosition();
+
+        destinationFinder.updateDestination();
+        tree = new TileNodeTree(this, pos, destinationFinder.getDestination());
         tree.buildTree();
     }
 
