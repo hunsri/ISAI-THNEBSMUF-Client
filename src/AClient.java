@@ -23,44 +23,44 @@ public class AClient {
 
         fieldViewer.display();
 
-        // client.getMyPlayerNumber();
-
-        // client.getAreaId(0, 0);  //Gebiete und Mauern (0) erkennen
-
         while (client.isAlive()) {
             Update u;
             while ((u = client.pullNextUpdate()) != null) {
                 //Updates in eigenen Datenstruktur einarbeiten
                 field.updateField(u);
                 if(u.player == myNumber) {
-                    if(u.bot == botA.getBotType().ordinal()) {
-                        botA.update(u);
-                        System.out.println("===BOT NOW AT===");
-                        System.out.println(botA.getPosition() +" Facing: "+botA.getFacingDirection());
-                        finderA.refresh(new Position(255, 0));
-                        Move m = finderA.getNextMove();
-                        if(m != null) {
-                            client.changeDirection(m.botID, m.moveAt);
-                        }
-                    // }else if (u.bot == botB.getBotType().ordinal()) {
-                    //     botB.update(u);
-                    //     finderB.refresh(new Position(1, 1));
-                    //     Move m = finderB.getNextMove();
-                    //     if(m != null) {
-                    //         client.changeDirection(m.botID, m.moveAt);
-                    //     }
-                    // }else if (u.bot == botC.getBotType().ordinal()) {
-                    //     botC.update(u);
-                    //     finderC.refresh(new Position(1, 1));
-                    //     Move m = finderC.getNextMove();
-                    //     if(m != null) {
-                    //         client.changeDirection(m.botID, m.moveAt);
-                    //     }
-                    }
+                    
+                    moveBot(client, u, botA, finderA, field);
+                    // moveBot(client, u, botB, finderB, field);
+                    // moveBot(client, u, botC, finderC, field);
+
+
+                    fieldViewer.updateImage();
                 }
             }
-            fieldViewer.updateImage();
 
         }
     }
+
+    private static void moveBot(NetworkClient client, Update u, Bot bot, Pathfinder finder, Field field) {
+
+        if(u.bot == bot.getBotType().ordinal()) {
+            bot.update(u);
+            System.out.println("===BOT NOW AT===");
+            System.out.println(bot.getPosition() +" Facing: "+bot.getFacingDirection());
+            finder.refresh(new Position(255, 0));
+
+            Move m;
+            if(MoveChecker.isAheadInvalid(bot, field)) {
+                System.out.println("Invalid move ahead");
+                m = MoveChecker.panicMove(bot, field);
+            } else {
+                m = finder.getNextMove();
+            }
+            if(m != null) {
+                client.changeDirection(m.botID, m.moveAt);
+            }
+        }
+    }
+        
 }

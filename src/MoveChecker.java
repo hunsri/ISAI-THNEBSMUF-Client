@@ -2,7 +2,17 @@ public class MoveChecker {
 
 
     public static boolean doesMoveReachDestination(Bot bot, int move, Position expectedPosition){
-        Position nextActualPosition = new Position(bot.getPosition().x, bot.getPosition().y);
+        
+        Position positionAfterMove = positionAfterMove(bot, move);
+        boolean result = expectedPosition.equals(positionAfterMove);
+        inform(result, expectedPosition, positionAfterMove);
+
+        return result;
+    }
+
+    private static Position positionAfterMove(Bot bot, int move) {
+        
+        Position nextPosition = new Position(bot.getPosition().x, bot.getPosition().y);
         
         Axis axis = Axis.getAxisOf(bot.getFacingDirection());
         int botPositionOnAxis;
@@ -35,10 +45,8 @@ public class MoveChecker {
         }
 
         if(!hasReachedTurningPoint) {
-            nextActualPosition = nextPosition(bot.getPosition(), bot.getFacingDirection());
-            boolean ret = expectedPosition.equals(nextActualPosition);
-            inform(ret, expectedPosition, nextActualPosition);
-            return ret;
+            nextPosition = nextPosition(bot.getPosition(), bot.getFacingDirection());
+            return nextPosition;
         }
 
         // Turning Point has been reached
@@ -60,10 +68,8 @@ public class MoveChecker {
             }
         }
 
-        nextActualPosition = nextPosition(bot.getPosition(), movingDirection);
-        boolean ret = expectedPosition.equals(nextActualPosition);
-        inform(ret, expectedPosition, nextActualPosition);
-        return ret;
+        nextPosition = nextPosition(bot.getPosition(), movingDirection);
+        return nextPosition;
     }
 
     private static void inform(boolean result, Position expected, Position willActuallyBe) {
@@ -90,5 +96,149 @@ public class MoveChecker {
             default:
                 return null;
         }
+    }
+
+    private static boolean isPositionValid(Position position, Field field, boolean ignoreBorder) {
+        
+        boolean outOfBounds = false;
+
+        if(position.x >= Field.SIZE || position.x < 0) {
+            outOfBounds = true;
+        }
+        else if(position.y >= Field.SIZE || position.y < 0) {
+            outOfBounds = true;
+        }
+
+        if(outOfBounds) {
+            if(!ignoreBorder) {
+                return false; //Cant cross border with standard bot
+            } else {
+                return true; //Potential check on end of warp
+            }
+        }
+        
+        int fieldID = field.getFieldAreaId(position.x, position.y);
+
+        if(fieldID > 0 && fieldID < 1000) {
+            return true;
+        }
+
+        return false;
+    }
+
+    private static Position getPositionAhead(Bot bot) {
+        Direction d = bot.getFacingDirection();
+
+        Position p = bot.getPosition();
+
+        switch (d) {
+            case NORTH:
+                return new Position(p.x, p.y-1);
+            case WEST:
+                return new Position(p.x-1, p.y);
+            case SOUTH:
+                return new Position(p.x, p.y+1);
+            case EAST:
+                return new Position(p.x+1, p.y);
+            default:
+                return null;
+        }
+    }
+
+    private static Position getPositionToRight(Bot bot) {
+        Direction d = bot.getFacingDirection();
+
+        Position p = bot.getPosition();
+
+        switch (d) {
+            case NORTH:
+                return new Position(p.x+1, p.y);
+            case WEST:
+                return new Position(p.x, p.y-1);
+            case SOUTH:
+                return new Position(p.x-1, p.y);
+            case EAST:
+                return new Position(p.x, p.y+1);
+            default:
+                return null;
+        }
+    }
+
+    private static Position getPositionToLeft(Bot bot) {
+        Direction d = bot.getFacingDirection();
+
+        Position p = bot.getPosition();
+
+        switch (d) {
+            case NORTH:
+                return new Position(p.x-1, p.y);
+            case WEST:
+                return new Position(p.x, p.y+1);
+            case SOUTH:
+                return new Position(p.x+1, p.y);
+            case EAST:
+                return new Position(p.x, p.y-1);
+            default:
+                return null;
+        }
+    }
+
+    public static boolean isAheadInvalid(Bot b, Field f) {
+        Position ahead = getPositionAhead(b);
+
+        boolean ignoreBorder = (BotType.BORDERLESS == b.getBotType());
+        boolean ignoreOwnTrail = (BotType.CLIPPING == b.getBotType());
+
+        return !isPositionValid(ahead, f, ignoreBorder);
+    }
+
+
+    /**
+     * Picks a valid move in time critical scenarios
+     * 
+     * @param b
+     * @param f
+     * @return A valid move
+     */
+    public static Move panicMove(Bot b, Field f) {
+
+        boolean ignoreBorder = (BotType.BORDERLESS == b.getBotType());
+        boolean ignoreOwnTrail = (BotType.CLIPPING == b.getBotType());
+
+        Move ret = new Move(b.getBotType(), 0);
+        Axis axis = Axis.getAxisOf(b.getFacingDirection());
+
+        int baseMove = (Axis.X == axis ? b.getPosition().x : b.getPosition().y);
+
+        Position left = getPositionToLeft(b);
+        Position right = getPositionToRight(b);
+
+        int mult = 1;
+
+        // check against positive or negative turn
+        if(isPositionValid(right, f, ignoreBorder)) {
+            if(Axis.Y == axis) {
+                if(b.getFacingDirection() == Direction.SOUTH) {
+                    mult = -1;
+                }
+            } else { // X
+                if(b.getFacingDirection() == Direction.WEST) {
+                    mult = -1;
+                }
+            }
+        } else if (isPositionValid(left, f, ignoreBorder)) {
+            if(Axis.Y == axis) {
+                if(b.getFacingDirection() == Direction.NORTH) {
+                    mult = -1;
+                }
+            } else {
+                if(b.getFacingDirection() == Direction.EAST) {
+                    mult = -1;
+                }
+            }
+        }
+
+        ret.moveAt = baseMove * mult;
+        return ret;
     }
 }

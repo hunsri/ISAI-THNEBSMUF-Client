@@ -97,46 +97,6 @@ public class Pathfinder {
         return ret;
     }
 
-
-    public Move nextMove() {
-
-        Move ret;
-
-        TileNode nextTurnTile = nextDirection();
-        
-        if(nextTurnTile == null){
-            return null;
-        }
-        
-        Movement m = Movement.directionToMovement(bot.getFacingDirection(), nextTurnTile.getFacing());
-
-        if(m == Movement.STRAIGHT){
-            if(bot.getFacingDirection() == Direction.NORTH || bot.getFacingDirection() == Direction.WEST)
-                ret = new Move(bot.getBotType(), 0);
-            else
-                ret = new Move(bot.getBotType(), Field.SIZE-1);
-        }
-
-        int moveAt;
-        Axis axis = Axis.getAxisOf(bot.getFacingDirection());
-        if(axis == Axis.X) {
-            moveAt = nextTurnTile.getPosition().x;
-        } else {
-            moveAt = nextTurnTile.getPosition().y;
-        }
-
-        Direction d = Direction.vectorDirection(bot.getPosition(), nextTurnTile.getPosition());
-
-        if(d == Direction.NORTH || d == Direction.WEST) {
-            moveAt *= -1;
-        }
-
-        ret = new Move(bot.getBotType(), moveAt);
-        MoveChecker.doesMoveReachDestination(bot, moveAt, nextTurnTile.getPosition());
-
-        return ret;
-    }
-
     private TileNode nextDirection() {
         if(plannedRoute.size()>0) {
             return plannedRoute.removeLast();
