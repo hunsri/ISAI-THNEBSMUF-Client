@@ -42,11 +42,16 @@ public class AClient {
 
     private static void moveBot(NetworkClient client, Update u, Bot bot, Pathfinder finder, Field field) {
 
+        int pathfindingRefreshRate = 2;
+
         if(u.bot == bot.getBotType().ordinal()) {
             bot.update(u);
             System.out.println("===BOT NOW AT===");
             System.out.println(bot.getPosition() +" Facing: "+bot.getFacingDirection());
-            finder.refresh(new Position(128, 128));
+            
+            if(finder.getConsumptionCounter() >= pathfindingRefreshRate) {
+                finder.refresh(new Position(128, 128));
+            }
 
             Move m;
             if(MoveChecker.isAheadInvalid(bot, field)) {

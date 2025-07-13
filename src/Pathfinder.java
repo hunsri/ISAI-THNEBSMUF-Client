@@ -3,6 +3,8 @@ import java.util.LinkedList;
 
 public class Pathfinder {
 
+    private int consumptionCounter = 0;
+
     private Field field;
 
     private TileNodeTree tree;
@@ -52,6 +54,8 @@ public class Pathfinder {
     }
 
     public Move getNextMove() {
+        consumptionCounter += 1; 
+
         Move ret = new Move(bot.getBotType(), 0);
 
         TileNode nextTile = nextDirection();
@@ -110,6 +114,7 @@ public class Pathfinder {
     }
 
     public void refresh(Position end) {
+        consumptionCounter = 0;
         plannedRoute.clear();
         plannedRouteOnMap = new boolean[Field.SIZE][Field.SIZE];
 
@@ -117,35 +122,14 @@ public class Pathfinder {
         tree.buildTree();
     }
 
-    // Check whether the bot has reached the location of its turn
-    //TODO replace with turn check
-    // private boolean hasBotReachedTurningPoint() {
-
-    //     Position p = field.getBotPosition(botType);
-
-    //     if(Axis.getAxisOf(botFacingDirection) == Axis.X) {
-    //         if(botFacingDirection == Direction.WEST) {
-    //             if(p.x >= nextTurningPoint-1) {
-    //                 return true;
-    //             }
-    //         } else { //EAST
-    //             if(p.x <= nextTurningPoint+1) {
-    //                 return true;
-    //             }
-    //         }
-    //     } else { //Y
-    //         if(botFacingDirection == Direction.SOUTH) {
-    //             if(p.y >= nextTurningPoint-1) {
-    //                 return true;
-    //             }
-    //         } else { //NORTH
-    //             if(p.y <= nextTurningPoint+1) {
-    //                 return true;
-    //             }        
-    //         }
-    //     }
-
-    //     return false;
-    // }
+    /**
+     * Returns how many steps of the path have been consumed
+     * Counter gets incremented each time {@link #getNextMove()} is called
+     *  
+     * @return Steps taken since the start of the calculation
+     */
+    public int getConsumptionCounter() {
+        return consumptionCounter;
+    }
 
 }
