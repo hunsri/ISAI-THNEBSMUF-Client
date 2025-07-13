@@ -8,6 +8,8 @@ public class Field {
 
     int[][] areaID = new int[SIZE][SIZE];
 
+    private boolean[][] debug = new boolean[Field.SIZE][Field.SIZE];
+
     NetworkClient client;
 
     private Position defaultBot;
@@ -57,7 +59,11 @@ public class Field {
     }
 
     public void markDebug(int x, int y) {
-        areaID[x][y] = Trails.DEBUG.getValue();
+        debug[x][y] = true;
+    }
+
+    public void cleanDebug() {
+        debug = new boolean[Field.SIZE][Field.SIZE];
     }
 
     private void updateBotPositions() {
@@ -82,5 +88,9 @@ public class Field {
             default:
                 return defaultBot; //just to satisfy switch statement
         }
+    }
+
+    public boolean[][] getDebugTrace() {
+        return debug;
     }
 }

@@ -29,15 +29,13 @@ public class AClient {
                 //Updates in eigenen Datenstruktur einarbeiten
                 field.updateField(u);
                 if(u.player == myNumber) {
-                    
                     moveBot(client, u, botA, finderA, field);
                     // moveBot(client, u, botB, finderB, field);
                     // moveBot(client, u, botC, finderC, field);
-
-
                     fieldViewer.updateImage();
                 }
             }
+            fieldViewer.cleanDebug();
 
         }
     }
@@ -48,7 +46,7 @@ public class AClient {
             bot.update(u);
             System.out.println("===BOT NOW AT===");
             System.out.println(bot.getPosition() +" Facing: "+bot.getFacingDirection());
-            finder.refresh(new Position(255, 0));
+            finder.refresh(new Position(128, 128));
 
             Move m;
             if(MoveChecker.isAheadInvalid(bot, field)) {
