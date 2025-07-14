@@ -126,21 +126,6 @@ public class Pathfinder {
     }
 
     /**
-     * Attempting to find a new path to the target
-     * Forcing a target position with the given position
-     * 
-     * @param end
-     */
-    public void refresh(Position end) {
-        consumptionCounter = 0;
-        plannedRoute.clear();
-        plannedRouteOnMap = new boolean[Field.SIZE][Field.SIZE];
-
-        tree = new TileNodeTree(this, bot.getPosition(), end);
-        tree.buildTree();
-    }
-
-    /**
      * Attempting to find a new path to the target.
      * Target gets determined automatically.
      * 

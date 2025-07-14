@@ -26,29 +26,22 @@ public class AClient {
 
         fieldViewer.display();
 
-        int cleanDebugCounter = 0;
 
         while (client.isAlive()) {
             Update u;
             while ((u = client.pullNextUpdate()) != null) {
                 //Updates in eigenen Datenstruktur einarbeiten
                 field.updateField(u);
-                
-                if(cleanDebugCounter > 5) {
-                    fieldViewer.cleanDebug();
-                    cleanDebugCounter = 0;
-                }
-                cleanDebugCounter += 1;
 
                 if(u.player == myNumber) {
-                    moveBot(client, u, botA, finderA, field);
                     moveBot(client, u, botB, finderB, field);
                     moveBot(client, u, botC, finderC, field);
+                    moveBot(client, u, botA, finderA, field);
                     fieldViewer.updateImage();
                 }
             }
 
-            // fieldViewer.cleanDebug();
+            fieldViewer.cleanDebug();
 
         }
     }
@@ -68,7 +61,7 @@ public class AClient {
             resetC = false;
         }
 
-        int pathfindingRefreshRate = 10;
+        int destinationRefreshRate = 50;
 
         if(u.bot == bot.getBotType().ordinal()) {
             boolean botOrientationValid = bot.update(u);
@@ -77,16 +70,15 @@ public class AClient {
                 resetBotPathfinding(bot);
             }
 
-            System.out.println("===BOT NOW AT===");
-            System.out.println(bot.getPosition() +" Facing: "+bot.getFacingDirection());
+            // System.out.println("===BOT NOW AT===");
+            // System.out.println(bot.getPosition() +" Facing: "+bot.getFacingDirection());
             
-            if(finder.getConsumptionCounter() >= pathfindingRefreshRate) {
+            if(finder.getConsumptionCounter() >= destinationRefreshRate) {
                 resetBotPathfinding(bot);
             }
 
             Move m;
             if(MoveChecker.isAheadInvalid(bot, field) || MoveChecker.isStepsAheadInvalid(bot, field, 2)) {
-            // if(MoveChecker.isAheadInvalid(bot, field)) {
                 System.out.println("Invalid move ahead, issuing panic move");
                 m = MoveChecker.panicMove(bot, field);
                 resetBotPathfinding(bot);;

@@ -98,7 +98,7 @@ public class MoveChecker {
         }
     }
 
-    public static boolean isPositionValid(Position position, Field field, boolean ignoreBorder) {
+    public static boolean isPositionValid(Position position, Field field, boolean ignoreBorder, boolean ignoreOwnTrail) {
         
         boolean outOfBounds = false;
 
@@ -121,6 +121,12 @@ public class MoveChecker {
 
         if(fieldID > 0 && fieldID < 1000) {
             return true;
+        }
+
+        if(ignoreOwnTrail) {
+            if(fieldID > 0 && fieldID != Trails.ENEMY.getValue()) {
+                return true;
+            }
         }
 
         return false;
@@ -208,7 +214,7 @@ public class MoveChecker {
         boolean ignoreBorder = (BotType.BORDERLESS == b.getBotType());
         boolean ignoreOwnTrail = (BotType.CLIPPING == b.getBotType());
 
-        return !isPositionValid(ahead, f, ignoreBorder);
+        return !isPositionValid(ahead, f, ignoreBorder, ignoreOwnTrail);
     }
 
     /**
@@ -225,7 +231,7 @@ public class MoveChecker {
         boolean ignoreBorder = (BotType.BORDERLESS == b.getBotType());
         boolean ignoreOwnTrail = (BotType.CLIPPING == b.getBotType());
 
-        return !isPositionValid(ahead, f, ignoreBorder);
+        return !isPositionValid(ahead, f, ignoreBorder, ignoreOwnTrail);
     }
 
 
@@ -252,7 +258,7 @@ public class MoveChecker {
         int mult = 1;
 
         // check against positive or negative turn
-        if(isPositionValid(right, f, ignoreBorder)) {
+        if(isPositionValid(right, f, ignoreBorder, ignoreOwnTrail)) {
             if(Axis.Y == axis) {
                 if(b.getFacingDirection() == Direction.SOUTH) {
                     mult = -1;
@@ -262,7 +268,7 @@ public class MoveChecker {
                     mult = -1;
                 }
             }
-        } else if (isPositionValid(left, f, ignoreBorder)) {
+        } else if (isPositionValid(left, f, ignoreBorder, ignoreOwnTrail)) {
             if(Axis.Y == axis) {
                 if(b.getFacingDirection() == Direction.NORTH) {
                     mult = -1;

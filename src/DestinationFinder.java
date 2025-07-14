@@ -40,7 +40,7 @@ public class DestinationFinder {
             return false;
         }
 
-        if(MoveChecker.isPositionValid(destination, field, false)) {
+        if(MoveChecker.isPositionValid(destination, field, false, false)) {
             return true;
         }
 
