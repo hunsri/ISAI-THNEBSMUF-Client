@@ -39,6 +39,14 @@ public class Field {
         updateBotPositions();
     }
 
+    /**
+     * Updates the field at the specified coordinates based on the provided {@link Update} object.
+     * Sets the value of the field depending on whether the update is for the current player or an enemy,
+     * and further distinguishes between different bot types for the current player.
+     * After updating the field, it refreshes the bot positions.
+     *
+     * @param update The {@link Update} object used to update the Field
+     */
     public void updateField(Update update) {
         int value;
 
@@ -61,10 +69,16 @@ public class Field {
     public void markDebug(int x, int y) {
         debug[x][y] = true;
     }
-
+    
+    
+    /**
+     * Resets all debug values in the field to {@code false}.
+     * <p>
+     * The debug values are exclusively used for visualization purposes and do not affect any other logic or state of the field.
+     */
     public void cleanDebug() {
-        // debug = new boolean[Field.SIZE][Field.SIZE];
-
+        //setting all values to false to clean them
+        //there is definitely a better way, but it beats reinitilization
         for(int i = 0; i < Field.SIZE; i++) {
             for(int j = 0; j < Field.SIZE; j++) {
                 debug[i][j] = false;
@@ -96,6 +110,13 @@ public class Field {
         }
     }
 
+    /**
+     * Returns the debug trace matrix.
+     * <p>
+     * The returned matrix reflects the current debug state, which can be reset using {@link #cleanDebug()}.
+     *
+     * @return a 2D boolean array representing the debug trace state.
+     */
     public boolean[][] getDebugTrace() {
         return debug;
     }

@@ -10,6 +10,17 @@ public class MoveChecker {
         return result;
     }
 
+    /**
+     * Core function of the {@link MoveChecker} helper class
+     * Calculates the next position of the bot after performing a move.
+     * The method determines the axis and direction the bot is facing, checks if a turning point is reached,
+     * and computes the next position accordingly. If the turning point is not reached, the bot continues
+     * in its current facing direction. If the turning point is reached, the bot changes direction based on the move.
+     *
+     * @param bot  the Bot whose position is to be calculated
+     * @param move the number of steps to move; positive for forward, negative for backward
+     * @return the Position object representing the bot's next position after the move
+     */
     private static Position positionAfterMove(Bot bot, int move) {
         
         Position nextPosition = new Position(bot.getPosition().x, bot.getPosition().y);
@@ -170,6 +181,12 @@ public class MoveChecker {
         }
     }
 
+    /**
+     * Returns the position right to the given bot, from the bots point of view
+     * 
+     * @param bot
+     * @return
+     */
     private static Position getPositionToRight(Bot bot) {
         Direction d = bot.getFacingDirection();
 
@@ -189,6 +206,13 @@ public class MoveChecker {
         }
     }
 
+    /**
+     * Returns the position left to the given bot, from the bots point of view
+     * 
+     * @param bot
+     * @param amount
+     * @return
+     */
     private static Position getPositionToLeft(Bot bot) {
         Direction d = bot.getFacingDirection();
 
@@ -208,6 +232,21 @@ public class MoveChecker {
         }
     }
 
+    
+    /**
+     * Determines if the position directly ahead of the given bot is invalid.
+     * <p>
+     * The method calculates the position in front of the bot and checks its validity
+     * within the provided field, taking into account the bot's type:
+     * <ul>
+     *   <li>If the bot is of type {@code BORDERLESS}, border checks are ignored.</li>
+     *   <li>If the bot is of type {@code CLIPPING}, own trail checks are ignored.</li>
+     * </ul>
+     *
+     * @param b the bot whose forward position is to be checked
+     * @param f the field in which the bot is moving
+     * @return {@code true} if the position ahead is invalid, {@code false} otherwise
+     */
     public static boolean isAheadInvalid(Bot b, Field f) {
         Position ahead = getPositionAhead(b);
 

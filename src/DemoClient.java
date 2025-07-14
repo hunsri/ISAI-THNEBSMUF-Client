@@ -1,6 +1,7 @@
 import lenz.htw.thnebsmuf.net.NetworkClient;
 import lenz.htw.thnebsmuf.net.Update;
 
+// used as reference only
 public class DemoClient {
 
     public static void main(String[] args) {

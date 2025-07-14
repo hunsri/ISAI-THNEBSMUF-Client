@@ -1,7 +1,5 @@
 import java.util.Random;
 
-import javax.print.attribute.standard.Destination;
-
 public class DestinationFinder {
 
     private Bot bot;

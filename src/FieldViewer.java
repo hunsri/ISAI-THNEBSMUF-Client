@@ -9,6 +9,7 @@ public class FieldViewer extends JPanel {
     private BufferedImage image;
     private Field field;
 
+    //setting the scale of the image
     private final int scale = 5; 
 
     public FieldViewer(Field field) {
@@ -25,7 +26,6 @@ public class FieldViewer extends JPanel {
         for (int y = 0; y < Field.SIZE; y++) {
             for (int x = 0; x < Field.SIZE; x++) {
 
-                // int value = field.getCachedAreaId(x, y);
                 int value = field.getFieldAreaId(x, y);
                 if(value > 255) { //checking for special values
                     color = Trails.getTrail(value).getColor();
@@ -39,7 +39,6 @@ public class FieldViewer extends JPanel {
                 image.setRGB(x*scale, y*scale, color.getRGB());
 
                 for(int i = 0; i < scale; i++) {
-                //     image.setRGB(x*scale+i, y*scale, color.getRGB());
                     for(int j = 0; j < scale; j++) {
                         image.setRGB(x*scale+i, y*scale+j, color.getRGB());
                     }

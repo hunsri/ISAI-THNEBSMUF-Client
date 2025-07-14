@@ -51,11 +51,24 @@ public class Pathfinder {
         return true;        
     }
 
+    /**
+     * For adding tiles to the path of the pathfinder.
+     * Should be called exclusively from {@link TileNodeTree}
+     *
+     * @param tileNode
+     */
     public void addToPlannedRoute(TileNode tileNode) {
         plannedRoute.add(tileNode);
         plannedRouteOnMap[tileNode.getPosition().x][tileNode.getPosition().y] = true;
     }
 
+    /**
+     * Determines and returns the next move for the bot based on its current position, facing direction,
+     * and the next tile to move to. The method calculates the direction vector to the next tile, checks
+     * for invalid moves (such as moving backwards), and computes the appropriate move position on the field.
+     * 
+     * @return a {@link Move} object representing the next move for the bot, or {@code null} if no valid move is possible.
+     */
     public Move getNextMove() {
         Move ret = new Move(bot.getBotType(), 0);
 
