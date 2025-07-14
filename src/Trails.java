@@ -1,12 +1,14 @@
 import java.awt.*;
 
+// Note that values >= 1000 are generally treated as impassable
 public enum Trails {
     NONE(900, new Color(255, 0, 255)),
     DEBUG(901, new Color(255, 165, 0)),
     OWN(1000, new Color(0, 0, 255)),
     OWN_PASSABLE(1001, new Color(0, 255, 255)),
     OWN_ROOMLESS(1002, new Color(0, 255, 128)),
-    ENEMY(1003, new Color(255, 0, 0));
+    ENEMY(1003, new Color(255, 0, 0)),
+    START_POSITION(1100, new Color(0, 255, 0));
 
     private final int value;
     private final Color color;
