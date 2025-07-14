@@ -36,12 +36,22 @@ public class Pathfinder {
     public boolean canStepAt(int posX, int posY) {
         int fieldID = field.getFieldAreaId(posX, posY);
 
-        // IDs between those values signal it is ok to step there 
+        // IDs outside those values signal we can't step there...
         if(!(fieldID > 0 && fieldID < 1000)) {
+            
+            //...unless we have the clipping bot, which can go through own trails
+            if(bot.getBotType() == BotType.CLIPPING) {
+                if(fieldID > 0 && fieldID != Trails.ENEMY.getValue()) {
+                    return true;
+                }
+            }
+            
+            //otherwise report that we can't go here
             return false;
         }
 
-        // Another pathfinder using a tile prohibits us from going there
+        // If we don't have the clipping bot, check if
+        // another pathfinder using a tile prohibits us from going there
         for(int i = 0; i < teamedFinders.size(); i++) {
             if(teamedFinders.get(i).plannedRouteOnMap[posX][posY] == true) {
                 return false;
