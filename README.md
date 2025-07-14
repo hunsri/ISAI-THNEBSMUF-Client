@@ -30,3 +30,8 @@ The core functionality of the BFS is offered through the `TileNodeTree` and `Til
 ### Individual Bot Behavior
 
 The individual behaviors are reflected in the `Pathfinder` and `MoveChecker` classes. For the `CLIPPING` bot the pathfinder will allow searching for paths through bots left by own trails as well. Furthermore it is not obstructed by the planned routes of other own bots. <br> For the `BORDERLESS` bot safechecks that disallow crossing the map border are disabled. This allows the `BORDERLESS` bot to break out of pockets if trapped at the edge of the map.
+
+### How it looks
+<img width="2559" height="1079" alt="Screenshot 2025-07-14 070425" src="https://github.com/user-attachments/assets/fbf7eb06-e545-4557-868f-555289c0fa4a" />
+Shown on the left side is the debug view of the client. <br> The trails of blue represent the own bots, the ones in red enemy bots. The orange trail represents the calculated path to a targeted position. <br> 
+On the right side is the server view. 
